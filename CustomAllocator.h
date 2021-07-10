@@ -78,6 +78,7 @@ public:
         std::cout << __PRETTY_FUNCTION__
                   << "[n = " << count_objects << ']' << std::endl;
 
+        std::free(ptr);
         m_allocatedCount -= count_objects;
     }
 
