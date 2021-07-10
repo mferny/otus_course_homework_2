@@ -39,10 +39,6 @@ public:
                           << "[n = " << N << ']' << std::endl;
 
                 m_memoryPool = reinterpret_cast<pointer>(std::malloc(sizeof(value_type) * N));
-                if (not m_memoryPool)
-                {
-                    throw std::bad_alloc();
-                }
 
                 m_allocatedCount += count_objects;
                 return m_memoryPool;
@@ -64,13 +60,7 @@ public:
         std::cout << __PRETTY_FUNCTION__
                   << "[n = " << count_objects << ']' << std::endl;
 
-        m_memoryPool = reinterpret_cast<pointer>(std::malloc(sizeof(value_type) * count_objects));
-        if (not m_memoryPool)
-        {
-            throw std::bad_alloc();
-        }
-
-        return m_memoryPool;
+        return reinterpret_cast<pointer>(std::malloc(sizeof(value_type) * count_objects));
     }
 
     void deallocate(T* ptr, std::size_t count_objects)
@@ -78,7 +68,11 @@ public:
         std::cout << __PRETTY_FUNCTION__
                   << "[n = " << count_objects << ']' << std::endl;
 
-        std::free(ptr);
+        if (m_memoryPool == nullptr)
+        {
+            std::free(ptr);
+        }
+
         m_allocatedCount -= count_objects;
     }
 

@@ -61,7 +61,7 @@ public:
 
     constexpr reference operator [] (size_type n)
     {
-        return *(m_begin + n);
+        return *(m_begin + sizeof(value_type) * n);
     }
 
     constexpr size_type max_size() noexcept
@@ -102,6 +102,7 @@ public:
             const auto size = m_current == 0 ? 1 : m_current;
             reserve(size * 2);
         }
+
         m_begin[m_current] = value;
         m_current++;
     }

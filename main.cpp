@@ -48,18 +48,6 @@ int main()
     std::cout << std::endl;
 
     {
-        std::cout << "Custom container containing 10 elements without predefined size" << std::endl;
-        SimpleContainer<int, CustomAllocator<int>> container;
-        for (int i = 0; i < 10; ++i)
-        {
-            container.push_back(42);
-        }
-        container.print();
-    }
-
-    std::cout << std::endl;
-
-    {
         std::cout << "Custom container containing 10 elements with predefined size 10" << std::endl;
         SimpleContainer<int, CustomAllocator<int, 10>> containerWithPrealloc(10);
         for (int i = 0; i < 10; ++i)
@@ -80,6 +68,18 @@ int main()
             containerWithReserve.push_back(42);
         }
         containerWithReserve.print();
+    }
+
+    std::cout << std::endl;
+
+    {
+        std::cout << "Custom container containing 10 elements without predefined size" << std::endl;
+        SimpleContainer<int, CustomAllocator<int>> container;
+        for (int i = 0; i < 10; ++i)
+        {
+            container.push_back(42);
+        }
+        container.print();
     }
 
     return 0;
