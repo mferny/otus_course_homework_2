@@ -3,7 +3,7 @@
 
 #include <map>
 
-using MapWithPredefSize = std::map<int, int, std::less<>, CustomAllocator<std::pair<const int, int>, 10>>;
+using MapWithPredefSize = std::map<int, int, std::less<>, CustomAllocator<std::pair<const int, int>, 10, true>>;
 using Map = std::map<int, int, std::less<>, CustomAllocator<std::pair<const int, int>>>;
 
 constexpr int factorial(int n)
@@ -49,7 +49,7 @@ int main()
 
     {
         std::cout << "Custom container containing 10 elements with predefined size 10" << std::endl;
-        SimpleContainer<int, CustomAllocator<int, 10>> containerWithPrealloc(10);
+        SimpleContainer<int, CustomAllocator<int, 10, true>> containerWithPrealloc(10);
         for (int i = 0; i < 10; ++i)
         {
             containerWithPrealloc.push_back(i);
