@@ -79,14 +79,14 @@ public:
         // allocate new bunch of memory for the first time
         if (m_begin == nullptr)
         {
-            m_begin = m_alloc.allocate(new_cap);
+            m_begin = std::move(m_alloc.allocate(new_cap));
             m_current = {};
             m_endOfStorage = new_cap;
         }
         else
         {
             // allocate new memory and clean previous
-            iterator newData = m_alloc.allocate(new_cap);
+            iterator newData = std::move(m_alloc.allocate(new_cap));
             std::copy(m_begin, m_begin + m_current, newData);
             m_endOfStorage = new_cap;
 

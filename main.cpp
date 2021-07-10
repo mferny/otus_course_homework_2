@@ -52,7 +52,7 @@ int main()
         SimpleContainer<int, CustomAllocator<int, 10>> containerWithPrealloc(10);
         for (int i = 0; i < 10; ++i)
         {
-            containerWithPrealloc.push_back(42);
+            containerWithPrealloc.push_back(i);
         }
         containerWithPrealloc.print();
     }
@@ -65,9 +65,22 @@ int main()
         containerWithReserve.reserve(10);
         for (int i = 0; i < 10; ++i)
         {
-            containerWithReserve.push_back(42);
+            containerWithReserve.push_back(i);
         }
         containerWithReserve.print();
+    }
+
+    std::cout << std::endl;
+
+    {
+        std::cout << "Custom container containing 10 elements without predefined size "
+                     "with std::allocator" << std::endl;
+        SimpleContainer<int> container;
+        for (int i = 0; i < 10; ++i)
+        {
+            container.push_back(i);
+        }
+        container.print();
     }
 
     std::cout << std::endl;
@@ -77,7 +90,7 @@ int main()
         SimpleContainer<int, CustomAllocator<int>> container;
         for (int i = 0; i < 10; ++i)
         {
-            container.push_back(42);
+            container.push_back(i);
         }
         container.print();
     }
