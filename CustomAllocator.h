@@ -5,10 +5,10 @@
 
 static constexpr std::size_t DefaultSize = 1;
 
-template<class T, std::size_t N = DefaultSize, bool isLimited = false>
+template<class T, std::size_t N = DefaultSize>
 class CustomAllocator
 {
-    static_assert(!std::is_same_v<T, void>, "Type of the allocator can not be void");
+    static_assert(not std::is_same_v<T, void>, "Type of the allocator can not be void");
 
 public:
     using value_type = T;
@@ -18,53 +18,49 @@ public:
     using const_reference = const T&;
     
     CustomAllocator() = default;
-
-    ~CustomAllocator() = default;
+    ~CustomAllocator()
+    {
+        std::cout << "Clearing memory pool" << std::endl;
+        free(m_memoryPool);
+    }
 
     template<typename U>
-    CustomAllocator(const CustomAllocator<U, N, isLimited>&) {}
+    CustomAllocator(const CustomAllocator<U, N>&) {}
 
     template<typename U>
     struct rebind
     {
-        typedef CustomAllocator<U, N, isLimited> other;
+        typedef CustomAllocator<U, N> other;
     };
 
     [[nodiscard]] pointer allocate(std::size_t count_objects)
     {
-        // allocator has predefined size
-        if constexpr (isLimited)
+        // allocate pool
+        if (m_allocatedCount == 0)
         {
-            if (m_allocatedCount + count_objects <= N)
-            {
-                std::cout << __PRETTY_FUNCTION__
-                          << "[n = " << count_objects << ']' << std::endl;
-
-                m_memoryPool[m_allocatedCount] = reinterpret_cast<pointer>(std::malloc(sizeof(value_type) * count_objects));
-                m_allocatedCount += count_objects;
-                return m_memoryPool[m_allocatedCount - count_objects];
-            }
-
-            throw std::length_error(
-                    "Cannot allocate. Size is bigger than predefined in constructor");
-        }
-        else
-        {
-            // allocator doesn't have predefined size, so it is unframed
             std::cout << __PRETTY_FUNCTION__
-                      << "[n = " << count_objects << ']' << std::endl;
+                      << "[n = " << N << ']' << std::endl;
 
-            return reinterpret_cast<pointer>(std::malloc(sizeof(value_type) * count_objects));
+            m_memoryPool = reinterpret_cast<pointer>(std::malloc(N * sizeof(value_type)));
+            m_allocatedCount += count_objects;
+            return m_memoryPool;
         }
+
+        std::cout << "Getting memory of size " << count_objects <<" from pool" << std::endl;
+        if (m_allocatedCount + count_objects <= N)
+        {
+            m_allocatedCount += count_objects;
+            return m_memoryPool + (m_allocatedCount - count_objects);
+        }
+
+        throw std::length_error(
+                "Cannot allocate. Size is bigger than predefined in constructor");
 
     }
 
     void deallocate(T* ptr, std::size_t count_objects)
     {
-        std::cout << __PRETTY_FUNCTION__
-                  << "[n = " << count_objects << ']' << std::endl;
 
-        free(ptr);
     }
 
     template<typename U, typename ...Args>
@@ -81,6 +77,6 @@ public:
     }
 
 private:
-    std::array<pointer, N> m_memoryPool;
+    pointer m_memoryPool = nullptr;
     std::size_t m_allocatedCount = 0;
 };
